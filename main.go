@@ -13,9 +13,9 @@ import (
 const (
   host     = "localhost"
   port     = 5432
-  user     = "postgres"
-  password = "your-password"
-  dbname   = "calhounio_demo"
+  user     = "docker"
+  password = "docker"
+  dbname   = "postgres"
 )
 
 func helloHandler(res http.ResponseWriter, req *http.Request) {
@@ -37,10 +37,7 @@ func helloHandler(res http.ResponseWriter, req *http.Request) {
 </html>`,
 	)
 }
-func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Go web app powered by Nine Publishing")
-}
-func main() {
+func dataHandler(res http.ResponseWriter, req *http.Request) {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
       "password=%s dbname=%s sslmode=disable",
       host, port, user, password, dbname)
@@ -57,9 +54,31 @@ func main() {
 
     fmt.Println("Successfully connected!")
 
+	res.Header().Set(
+		"Content-Type",
+		"text/html",
+	)
+	io.WriteString(
+		res,
+		`<doctype html>
+<html>
+	<head>
+		<title>Hello Data</title>
+	</head>
+	<body>
+		Hello Data </br>
+	</body>
+</html>`,
+	)
+}
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Go web app powered by Nine Publishing 1")
+}
+func main() {
 
 	http.HandleFunc("/", defaultHandler)
-	http.HandleFunc("/hello", helloHandler)
+  http.HandleFunc("/hello", helloHandler)
+  http.HandleFunc("/data", dataHandler)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
