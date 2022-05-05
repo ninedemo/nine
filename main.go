@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-  "database/sql"
+//  "database/sql"
 	"io"
 	"log"
 	"net/http"
 
-  _ "github.com/lib/pq"
+//  _ "github.com/lib/pq"
 )
 
 const (
@@ -32,7 +32,6 @@ func helloHandler(res http.ResponseWriter, req *http.Request) {
 	</head>
 	<body>
 		Hello Gopher </br>
-		It is really awesome that both Docker and Kubernetes are written in Go!
 	</body>
 </html>`,
 	)
