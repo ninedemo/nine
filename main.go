@@ -37,6 +37,7 @@ func helloHandler(res http.ResponseWriter, req *http.Request) {
 	)
 }
 func dataHandler(res http.ResponseWriter, req *http.Request) {
+  /*
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
       "password=%s dbname=%s sslmode=disable",
       host, port, user, password, dbname)
@@ -52,7 +53,7 @@ func dataHandler(res http.ResponseWriter, req *http.Request) {
     }
 
     fmt.Println("Successfully connected!")
-
+*/
 	res.Header().Set(
 		"Content-Type",
 		"text/html",
