@@ -2,13 +2,15 @@
 FROM golang:latest
 
 # Copy the local package files to the container’s workspace.
-ADD . github.com/shijuvar/golang-docker
+#ADD . github.com/shijuvar/golang-docker
+ADD . github.com/ninedemo/nine
 
 # Build the golang-docker command inside the container.
-RUN go install github.com/shijuvar/golang-docker@latest
+#RUN go install github.com/shijuvar/golang-docker@latest
+RUN go install github.com/ninedemo/nine@latest
 
 # Run the golang-docker command when the container starts.
-ENTRYPOINT /go/bin/golang-docker
+ENTRYPOINT /go/bin/nine
 
 # http server listens on port 8080.
 EXPOSE 8080
