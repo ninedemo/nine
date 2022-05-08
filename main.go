@@ -83,7 +83,7 @@ func articleHandler(res http.ResponseWriter, req *http.Request) {
 	)
 }
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Go web app powered by Nine Publishing 12345")
+	fmt.Fprintf(w, "Go web app powered by Nine Publishing 12345678")
 }
 func main() {
   http.HandleFunc("/", defaultHandler)
