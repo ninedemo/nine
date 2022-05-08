@@ -1,13 +1,15 @@
 package main
 
 import (
+  "context"
 	"fmt"
-//  "database/sql"
 	"io"
 	"log"
+  "os"
 	"net/http"
 
-//  _ "github.com/lib/pq"
+  "github.com/jackc/pgx/v4"
+  "github.com/jackc/pgtype"
 )
 
 const (
@@ -15,8 +17,11 @@ const (
   port     = 5432
   user     = "docker"
   password = "docker"
-  dbname   = "postgres"
+  dbname   = "docker"
 )
+func exitHandler(res http.ResponseWriter, req *http.Request) {
+  os.Exit(0)
+}
 
 func helloHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set(
@@ -36,24 +41,30 @@ func helloHandler(res http.ResponseWriter, req *http.Request) {
 </html>`,
 	)
 }
-func dataHandler(res http.ResponseWriter, req *http.Request) {
-  /*
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-      "password=%s dbname=%s sslmode=disable",
-      host, port, user, password, dbname)
-    db, err := sql.Open("postgres", psqlInfo)
-    if err != nil {
-      panic(err)
-    }
-    defer db.Close()
+func newArticleHandler(res http.ResponseWriter, req *http.Request) {
+}
+func articleHandler(res http.ResponseWriter, req *http.Request) {
+  urlExample := "postgres://docker:docker@localhost:5432/docker"
+  conn, err := pgx.Connect(context.Background(), urlExample)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
 
-    err = db.Ping()
-    if err != nil {
-      panic(err)
-    }
+  var id int64
+	var title string
+  var date pgtype.Date
+  var body string
+	err = conn.QueryRow(context.Background(), "select id, title, date, body from public.article where id = $1", 42).Scan(&id, &title, &date, &body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		os.Exit(1)
+	}
 
-    fmt.Println("Successfully connected!")
-*/
+	fmt.Println(id, title, date, body)
+
+
 	res.Header().Set(
 		"Content-Type",
 		"text/html",
@@ -72,13 +83,14 @@ func dataHandler(res http.ResponseWriter, req *http.Request) {
 	)
 }
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Go web app powered by Nine Publishing 1234")
+	fmt.Fprintf(w, "Go web app powered by Nine Publishing 12345")
 }
 func main() {
-
-	http.HandleFunc("/", defaultHandler)
+  http.HandleFunc("/", defaultHandler)
+	http.HandleFunc("/exit", exitHandler)
   http.HandleFunc("/hello", helloHandler)
-  http.HandleFunc("/data", dataHandler)
+  http.HandleFunc("/articles", newArticleHandler)
+  http.HandleFunc("/articles/", articleHandler)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

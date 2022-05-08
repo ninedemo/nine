@@ -1,8 +1,12 @@
 # golang image where workspace (GOPATH) configured at /go.
 FROM golang:latest
+FROM golang:alpine
+
+RUN apk add --no-cache git make bash openssh-client
+
+RUN go install github.com/jackc/pgx/v4@latest
 
 # Copy the local package files to the container’s workspace.
-#ADD . github.com/shijuvar/golang-docker
 ADD . github.com/ninedemo/nine
 
 # Build the golang-docker command inside the container.

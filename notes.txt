@@ -1,2 +1,4 @@
 docker build -t nine_postgresql -f nine_postgresql .
 docker build -t nine_webapp -f nine_webapp .
+docker run -p 5432:5432 nine_postgresql
+docker run -p 8080:8080 nine_webapp
